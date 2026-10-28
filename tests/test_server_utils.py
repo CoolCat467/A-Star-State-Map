@@ -8,7 +8,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from werkzeug.exceptions import Forbidden, NotFound
 
-from leaderboard.server_utils import (
+from state_map.server_utils import (
     find_ip,
     get_exception_page,
     pretty_exception,

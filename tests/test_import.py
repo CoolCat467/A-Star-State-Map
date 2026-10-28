@@ -1,6 +1,6 @@
-import leaderboard
+import state_map
 
 
 def test_has_run() -> None:
-    assert hasattr(leaderboard, "run")
-    assert callable(leaderboard.run)
+    assert hasattr(state_map, "run")
+    assert callable(state_map.run)

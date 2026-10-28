@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from leaderboard import htmlgen
+from state_map import htmlgen
 
 
 def test_indent_single() -> None:

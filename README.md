@@ -1,10 +1,9 @@
 # Leaderboard-Server
 Simple leaderboard webserver.
 
-[![Tests](https://github.com/CoolCat467/Leaderboard-Server/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/CoolCat467/Leaderboard-Server/actions/workflows/ci.yml)
+[![Tests](https://github.com/CoolCat467/A-Star-State-Map/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/CoolCat467/A-Star-State-Map/actions/workflows/ci.yml)
 <!-- BADGIE TIME -->
 
-[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/CoolCat467/Leaderboard-Server/main.svg)](https://results.pre-commit.ci/latest/github/CoolCat467/Leaderboard-Server/main)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 
 <!-- END BADGIE TIME -->
@@ -20,12 +19,12 @@ This can be changed in the configuration file (more info below)
 
 ## Installation
 ```console
-pip install git+https://github.com/CoolCat467/Leaderboard-Server.git
+pip install git+https://github.com/CoolCat467/A-Star-State-Map.git
 ```
 
 ## Run
 ```console
-leaderboard_server
+state_map_server
 ```
 Run with `--help` to see full optional arguments list.
 
@@ -37,18 +36,18 @@ as the server starts up.
 
 ## Configuration
 The main configuration file is saved either in
-`$XDG_CONFIG_HOME/leaderboard_webserver/config.toml` or
-`$HOME/.config/leaderboard_webserver/config.toml`, where you can change
+`$XDG_CONFIG_HOME/state_map_webserver/config.toml` or
+`$HOME/.config/state_map_webserver/config.toml`, where you can change
 things like what port(s) the webserver is hosted on, hypercorn
 configuration, and enabling SSL support!
 
 Create the default configuration file by running
 ```console
-leaderboard_server --create-default-config
+state_map_server --create-default-config
 ```
 
 Important: When you do this program, the configuration file will be
-saved in `$XDG_CONFIG_HOME/leaderboard_webserver` (`~/.config` if
+saved in `$XDG_CONFIG_HOME/state_map_webserver` (`~/.config` if
 $XDG_CONFIG_HOME not set) and the program will create these files if
 they do not exist.
 THIS CAN OVERWRITE EXISTING CONFIGURATION FILES!
@@ -68,16 +67,16 @@ address of the machine running the webserver.
 When it asks `software`, tell them `other`.
 For my installation, I ended up [installing it with pip](https://pypi.org/project/certbot/).
 5) Install the [certbot duckdns plugin](https://github.com/infinityofspace/certbot_dns_duckdns) for certbot
-6) Either run certbot from duckdns plugin's README or run [/scripts/cert_create.sh](https://github.com/CoolCat467/Leaderboard-Server/blob/main/scripts/cert_create.sh) with your details.
-7) Setup autorenewal from [certbot wiki](https://eff-certbot.readthedocs.io/en/latest/using.html#setting-up-automated-renewal) or look at [/scripts/cert_renew.sh](https://github.com/CoolCat467/Leaderboard-Server/blob/main/scripts/cert_renew.sh)
+6) Either run certbot from duckdns plugin's README or run [/scripts/cert_create.sh](https://github.com/CoolCat467/A-Star-State-Map/blob/main/scripts/cert_create.sh) with your details.
+7) Setup autorenewal from [certbot wiki](https://eff-certbot.readthedocs.io/en/latest/using.html#setting-up-automated-renewal) or look at [/scripts/cert_renew.sh](https://github.com/CoolCat467/A-Star-State-Map/blob/main/scripts/cert_renew.sh)
 8) Uncomment SSL lines in the webserver configuration file (see section above) and edit as needed for your particular setup.
 
 
 ### Links
-* Source Code - https://github.com/CoolCat467/Leaderboard-Server.git
-* Issues      - https://github.com/CoolCat467/Leaderboard-Server/issues
+* Source Code - https://github.com/CoolCat467/A-Star-State-Map.git
+* Issues      - https://github.com/CoolCat467/A-Star-State-Map/issues
 
 
 ### License
 -----------
-Code and documentation are available according to the GNU General Public License v3.0 (see [LICENSE](https://github.com/CoolCat467/Leaderboard-Server/blob/HEAD/LICENSE)).
+Code and documentation are available according to the GNU General Public License v3.0 (see [LICENSE](https://github.com/CoolCat467/A-Star-State-Map/blob/HEAD/LICENSE)).

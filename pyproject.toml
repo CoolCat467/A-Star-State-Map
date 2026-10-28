@@ -3,7 +3,7 @@ requires = ["setuptools >= 64"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "leaderboard"
+name = "state_map"
 dynamic = ["version"]
 authors = [
   { name="CoolCat467", email="CoolCat467@duck.com" },
@@ -31,7 +31,7 @@ classifiers = [
     "Framework :: Trio",
     "Typing :: Typed",
 ]
-keywords = ["leaderboard", "server", "frontend"]
+keywords = ["state_map", "server", "frontend"]
 dependencies = [
     "hypercorn[trio]~=0.18.0",
     "quart~=0.20.0",
@@ -44,14 +44,14 @@ dependencies = [
 ]
 
 [tool.setuptools.dynamic]
-version = {attr = "leaderboard.server.__version__"}
+version = {attr = "state_map.server.__version__"}
 
 [project.urls]
-"Source" = "https://github.com/CoolCat467/Leaderboard-Server"
-"Bug Tracker" = "https://github.com/CoolCat467/Leaderboard-Server/issues"
+"Source" = "https://github.com/CoolCat467/A-Star-State-Map"
+"Bug Tracker" = "https://github.com/CoolCat467/A-Star-State-Map/issues"
 
 [project.scripts]
-leaderboard_server = "leaderboard:run"
+state_map_server = "state_map:run"
 
 [project.optional-dependencies]
 tests = [
@@ -69,7 +69,7 @@ tools = [
 ]
 
 [tool.setuptools.package-data]
-leaderboard = ["py.typed", "templates/*", "static/*"]
+state_map = ["py.typed", "templates/*", "static/*"]
 
 [tool.uv]
 package = true
@@ -152,7 +152,7 @@ extend-ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"src/leaderboard/htmlgen.py" = [
+"src/state_map/htmlgen.py" = [
     "D417",  # Bugged "Missing argument descriptions" even though they are there
 ]
 "tests/*" = [
@@ -162,7 +162,7 @@ extend-ignore = [
 ]
 
 [tool.pytest.ini_options]
-addopts = "--cov-report=term-missing --cov=leaderboard"
+addopts = "--cov-report=term-missing --cov=state_map"
 testpaths = [
     "tests",
 ]

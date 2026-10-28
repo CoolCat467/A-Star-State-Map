@@ -20,7 +20,7 @@ from __future__ import annotations
 
 __license__ = "GNU General Public License Version 3"
 
-from leaderboard.server import (
+from state_map.server import (
     __author__ as __author__,
     __title__ as __title__,
     __version__ as __version__,

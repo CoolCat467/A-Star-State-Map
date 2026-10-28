@@ -1,4 +1,4 @@
-"""Leaderboard Web Server - Simple website to create and view leaderboards.
+"""state_map Web Server - Simple website to create and view state_maps.
 
 Copyright (C) 2026  CoolCat467
 
@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
-__title__ = "Leaderboard Webserver"
+__title__ = "state_map Webserver"
 __author__ = "CoolCat467"
 __version__ = "0.1.1"
 __license__ = "GNU General Public License Version 3"
@@ -46,8 +46,8 @@ from quart import request
 from quart.templating import stream_template
 from quart_trio import QuartTrio
 
-from leaderboard.elapsed import combine_end, get_elapsed
-from leaderboard.server_utils import (
+from state_map.elapsed import combine_end, get_elapsed
+from state_map.server_utils import (
     find_ip,
     get_exception_page,
     pretty_exception,
@@ -79,7 +79,7 @@ T = TypeVar("T")
 
 @dataclasses.dataclass
 class Team:
-    """Team in a Leaderboard."""
+    """Team in a state_map."""
 
     id_: int
     title: str
@@ -88,7 +88,7 @@ class Team:
 
 
 class BoardStateEnum(IntEnum):
-    """Leaderboard State Enum."""
+    """state_map State Enum."""
 
     CREATED = 0
     RUNNING = auto()
@@ -96,8 +96,8 @@ class BoardStateEnum(IntEnum):
 
 
 @dataclasses.dataclass
-class Leaderboard:
-    """Leaderboard."""
+class StateMap:
+    """StateMap."""
 
     title: str
     state: BoardStateEnum = BoardStateEnum.CREATED
@@ -109,7 +109,7 @@ class Leaderboard:
 class AppData(TypedDict):
     """Global shared application data."""
 
-    leaderboards: dict[UUID, Leaderboard]
+    state_maps: dict[UUID, StateMap]
 
 
 app: Final = QuartTrio(  # pylint: disable=invalid-name
@@ -117,7 +117,7 @@ app: Final = QuartTrio(  # pylint: disable=invalid-name
     static_folder="static",
     template_folder="templates",
 )
-APP_DATA = AppData({"leaderboards": {}})
+APP_DATA = AppData({"state_maps": {}})
 
 
 @app.get("/")
@@ -125,7 +125,7 @@ async def root_get() -> AsyncIterator[str]:
     """Handle main page GET request."""
     return await stream_template(
         "root_get.html.jinja",
-        leaderboards=APP_DATA["leaderboards"],
+        state_maps=APP_DATA["state_maps"],
     )
 
 
@@ -149,8 +149,8 @@ async def root_post() -> (
         errors.append(
             f"Max length of title is <code>{max_title_length}</code>.",
         )
-    for leaderboard in APP_DATA["leaderboards"].values():
-        if leaderboard.title == title:
+    for state_map in APP_DATA["state_maps"].values():
+        if state_map.title == title:
             errors.append("Provided title already exists.")
             break
     if errors:
@@ -161,32 +161,32 @@ async def root_post() -> (
             request.url,
         )
 
-    # create leaderboard
+    # create state_map
     uuid = uuid4()
-    APP_DATA["leaderboards"][uuid] = Leaderboard(title)
+    APP_DATA["state_maps"][uuid] = state_map(title)
 
-    return app.redirect(f"/leaderboard/{uuid}")
+    return app.redirect(f"/state_map/{uuid}")
 
 
-@app.get("/leaderboard/<uuid:leaderboard_uuid>")
+@app.get("/state_map/<uuid:state_map_uuid>")
 @pretty_exception
-async def leaderboard_get(
-    leaderboard_uuid: UUID,
+async def state_map_get(
+    state_map_uuid: UUID,
 ) -> AsyncIterator[str] | tuple[AsyncIterator[str], int]:
-    """Leaderboard page get handling."""
-    leaderboard = APP_DATA["leaderboards"].get(leaderboard_uuid)
+    """state_map page get handling."""
+    state_map = APP_DATA["state_maps"].get(state_map_uuid)
 
-    if leaderboard is None:
+    if state_map is None:
         return await get_exception_page(
             404,
             "Not Found",
-            "Requested leaderboard not found.",
+            "Requested state_map not found.",
             request.url,
         )
 
     return await stream_template(
-        "leaderboard_get.html.jinja",
-        leaderboard=leaderboard,
+        "state_map_get.html.jinja",
+        state_map=state_map,
         get_elapsed=get_elapsed,
     )
 
@@ -199,27 +199,27 @@ def parse_int_or_none(value: str) -> int | None:
         return None
 
 
-@app.post("/leaderboard/<uuid:leaderboard_uuid>")
+@app.post("/state_map/<uuid:state_map_uuid>")
 @pretty_exception
-async def leaderboard_post(
-    leaderboard_uuid: UUID,
+async def state_map_post(
+    state_map_uuid: UUID,
 ) -> tuple[AsyncIterator[str], int] | WerkzeugResponse:
-    """Leaderboard page post handling."""
-    leaderboard = APP_DATA["leaderboards"].get(leaderboard_uuid)
+    """state_map page post handling."""
+    state_map = APP_DATA["state_maps"].get(state_map_uuid)
 
-    if leaderboard is None:
+    if state_map is None:
         return await get_exception_page(
             404,
             "Not Found",
-            "Requested leaderboard not found.",
+            "Requested state_map not found.",
             request.url,
         )
 
     multi_dict = await request.form
     data = multi_dict.to_dict()
 
-    leaderboard_timer_start = "start_leaderboard_timer" in data
-    leaderboard_timer_stop = "stop_leaderboard_timer" in data
+    state_map_timer_start = "start_state_map_timer" in data
+    state_map_timer_stop = "stop_state_map_timer" in data
     team_title = data.get("team_title", "").strip()
     team_stop = parse_int_or_none(data.get("team_stop", ""))
     team_complete_index: int | None = None
@@ -227,25 +227,23 @@ async def leaderboard_post(
     max_title_length = 30
 
     errors = []
-    if leaderboard_timer_start:
-        if leaderboard.state != BoardStateEnum.CREATED:
+    if state_map_timer_start:
+        if state_map.state != BoardStateEnum.CREATED:
             errors.append(
-                "Cannot start leaderboard timer if leaderboard not in <code>created</code> state.",
+                "Cannot start state_map timer if state_map not in <code>created</code> state.",
             )
-        elif not leaderboard.teams:
+        elif not state_map.teams:
             errors.append(
-                "Cannot start leaderboard timer if leaderboard has no teams.",
+                "Cannot start state_map timer if state_map has no teams.",
             )
-    elif (
-        leaderboard_timer_stop and leaderboard.state != BoardStateEnum.RUNNING
-    ):
+    elif state_map_timer_stop and state_map.state != BoardStateEnum.RUNNING:
         errors.append(
-            "Cannot stop leaderboard timer if leaderboard not in <code>running</code> state.",
+            "Cannot stop state_map timer if state_map not in <code>running</code> state.",
         )
     elif team_title:
-        if leaderboard.state != BoardStateEnum.CREATED:
+        if state_map.state != BoardStateEnum.CREATED:
             errors.append(
-                "Cannot create a team while leaderboard timer is running.",
+                "Cannot create a team while state_map timer is running.",
             )
         elif len(team_title) > max_title_length:
             errors.append(
@@ -253,20 +251,20 @@ async def leaderboard_post(
             )
             team_title = None
         else:
-            for team in leaderboard.teams:
+            for team in state_map.teams:
                 if team.title == team_title:
                     errors.append("Team with given title already exists.")
                     team_title = None
                     break
     elif team_stop is not None:
-        if leaderboard.state != BoardStateEnum.RUNNING:
+        if state_map.state != BoardStateEnum.RUNNING:
             errors.append(
-                "Cannot stop leaderboard timer if leaderboard not in <code>running</code> state.",
+                "Cannot stop state_map timer if state_map not in <code>running</code> state.",
             )
-        elif team_stop < 0 or team_stop > len(leaderboard.teams):
+        elif team_stop < 0 or team_stop > len(state_map.teams):
             errors.append("Team id out of bounds.")
         else:
-            for team_complete_index, team in enumerate(leaderboard.teams):
+            for team_complete_index, team in enumerate(state_map.teams):
                 if team.id_ == team_stop:
                     team_complete_index = team_complete_index
                     break
@@ -282,33 +280,33 @@ async def leaderboard_post(
             request.url,
         )
 
-    if leaderboard_timer_start:
-        assert leaderboard.state == BoardStateEnum.CREATED
-        leaderboard.start_time = time.time()
-        leaderboard.state = BoardStateEnum.RUNNING
+    if state_map_timer_start:
+        assert state_map.state == BoardStateEnum.CREATED
+        state_map.start_time = time.time()
+        state_map.state = BoardStateEnum.RUNNING
 
-    elif leaderboard_timer_stop:
-        assert leaderboard.state == BoardStateEnum.RUNNING
-        leaderboard.state = BoardStateEnum.COMPLETED
+    elif state_map_timer_stop:
+        assert state_map.state == BoardStateEnum.RUNNING
+        state_map.state = BoardStateEnum.COMPLETED
 
     elif team_title:
-        assert leaderboard.state == BoardStateEnum.CREATED
-        leaderboard.teams.append(Team(leaderboard.next_team_id, team_title))
-        leaderboard.next_team_id += 1
+        assert state_map.state == BoardStateEnum.CREATED
+        state_map.teams.append(Team(state_map.next_team_id, team_title))
+        state_map.next_team_id += 1
 
     elif team_complete_index is not None:
-        assert leaderboard.state == BoardStateEnum.RUNNING
-        team = leaderboard.teams[team_complete_index]
+        assert state_map.state == BoardStateEnum.RUNNING
+        team = state_map.teams[team_complete_index]
 
         team.end_time = time.time()
         team.complete = True
 
-        leaderboard.teams.sort(
+        state_map.teams.sort(
             key=lambda team: team.end_time if team.complete else math.inf,
         )
 
-        if all(team.complete for team in leaderboard.teams):
-            leaderboard.state = BoardStateEnum.COMPLETED
+        if all(team.complete for team in state_map.teams):
+            state_map.state = BoardStateEnum.COMPLETED
 
     else:
         return await get_exception_page(
@@ -318,7 +316,7 @@ async def leaderboard_post(
             request.url,
         )
 
-    return app.redirect(f"/leaderboard/{leaderboard_uuid}")
+    return app.redirect(f"/state_map/{state_map_uuid}")
 
 
 def run_server(
@@ -447,7 +445,7 @@ use_reloader = false
 def run() -> None:
     """Run scanner server."""
     parser = argparse.ArgumentParser(
-        description="Simple website to create and view leaderboards. ",
+        description="Simple website to create and view state maps. ",
     )
     parser.add_argument(
         "--version",

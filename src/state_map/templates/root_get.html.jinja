@@ -1,0 +1,24 @@
+{% extends "base.html.jinja" %}
+{% block title %}View / Create state_map{% endblock title %}
+{% block body %}
+<div class="box">
+  <span>Current state_maps</span>
+  <br>
+  <ul>
+    {% for uuid, state_map in state_maps.items() %}
+    <li><a href="/state_map/{{ uuid }}"><button>{{ state_map.title|escape }} ({{ state_map.teams|length }} teams)</button></a></li>
+    {% else %}
+    <p>There are no state_maps currently. Create one below.</p>
+    {% endfor %}
+  </ul>
+</div>
+<div class="box">
+  <b>Create a New state_map</b>
+  <form id="create_state_map" name="create_state_map" method="post">
+    <label for="state_map_title">Title</label>
+    <input id="state_map_title" name="title" size="30" maxlength="30" required="true">
+    <br>
+    <input type="submit" id="create_state_map_submit_button" name="create_state_map_submit_button" value="Create">
+  </form>
+</div>
+{% endblock body %}

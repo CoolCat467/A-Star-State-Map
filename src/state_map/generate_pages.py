@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Generate pages for the leaderboard web server.
+"""Generate pages for the state_map web server.
 
 Copyright (C) 2022-2026  CoolCat467
 
@@ -30,7 +30,7 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, Final
 
-from leaderboard import htmlgen, server
+from state_map import htmlgen, server
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -323,7 +323,7 @@ def generate_error_page() -> str:
     )
 
 
-def generate_leaderboard_list() -> str:
+def generate_state_map_list() -> str:
     """Generate radio items for scan devices."""
     htmlgen.create_link(
         "/update_scanners",
@@ -334,10 +334,10 @@ def generate_leaderboard_list() -> str:
         ),
     )
 
-    title = htmlgen.jinja_expression("leaderboard.title|escape")
-    count = htmlgen.jinja_expression("leaderboard.teams|length")
+    title = htmlgen.jinja_expression("state_map.title|escape")
+    count = htmlgen.jinja_expression("state_map.teams|length")
     link = htmlgen.create_link(
-        "/leaderboard/" + htmlgen.jinja_expression("uuid"),
+        "/state_map/" + htmlgen.jinja_expression("uuid"),
         htmlgen.wrap_tag(
             "button",
             f"{title} ({count} teams)",
@@ -346,12 +346,12 @@ def generate_leaderboard_list() -> str:
     )
 
     return htmlgen.jinja_bullet_list(
-        ("uuid", "leaderboard"),
-        "leaderboards.items()",
+        ("uuid", "state_map"),
+        "state_maps.items()",
         link,
         else_content=htmlgen.wrap_tag(
             "p",
-            "There are no leaderboards currently. Create one below.",
+            "There are no state_maps currently. Create one below.",
             block=False,
         ),
     )
@@ -360,13 +360,13 @@ def generate_leaderboard_list() -> str:
 @save_template_as("root_get")
 def generate_root_get() -> str:
     """Generate / (root) GET page."""
-    leaderboards_box = htmlgen.contain_in_box(
-        generate_leaderboard_list(),
-        "Current Leaderboards",
+    state_maps_box = htmlgen.contain_in_box(
+        generate_state_map_list(),
+        "Current state_maps",
     )
 
     form_content = htmlgen.input_field(
-        "leaderboard_title",
+        "state_map_title",
         "Title",
         field_name="title",
         attrs={
@@ -376,27 +376,27 @@ def generate_root_get() -> str:
         },
     )
 
-    create_leaderboard_form = htmlgen.form(
-        "create_leaderboard",
+    create_state_map_form = htmlgen.form(
+        "create_state_map",
         form_content,
         "Create",
-        "Create a New Leaderboard",
+        "Create a New state_map",
     )
 
     html = "\n".join(
         (
-            leaderboards_box,
-            htmlgen.contain_in_box(create_leaderboard_form),
+            state_maps_box,
+            htmlgen.contain_in_box(create_state_map_form),
         ),
     )
 
-    return template("View / Create Leaderboard", html)
+    return template("View / Create state_map", html)
 
 
-@save_template_as("leaderboard_get")
-def generate_leaderboard_get() -> str:
-    """Generate /leaderboard GET page."""
-    title = htmlgen.jinja_expression("leaderboard.title | escape")
+@save_template_as("state_map_get")
+def generate_state_map_get() -> str:
+    """Generate /state_map GET page."""
+    title = htmlgen.jinja_expression("state_map.title | escape")
 
     team_id = htmlgen.jinja_expression("team.id_")
 
@@ -422,7 +422,7 @@ def generate_leaderboard_get() -> str:
 
     teams_table_body = htmlgen.jinja_table_row(
         ("team",),
-        "leaderboard.teams",
+        "state_map.teams",
         "\n".join(
             (
                 htmlgen.wrap_tag(
@@ -438,14 +438,14 @@ def generate_leaderboard_get() -> str:
                 # htmlgen.wrap_tag("td", htmlgen.jinja_expression("team.complete"), block=False),
                 htmlgen.jinja_if_block(
                     {
-                        f"leaderboard.state != {server.BoardStateEnum.CREATED}": htmlgen.wrap_tag(
+                        f"state_map.state != {server.BoardStateEnum.CREATED}": htmlgen.wrap_tag(
                             "td",
                             htmlgen.jinja_if_block(
                                 {
                                     "team.complete": htmlgen.jinja_expression(
-                                        "get_elapsed(team.end_time - leaderboard.start_time)",
+                                        "get_elapsed(team.end_time - state_map.start_time)",
                                     ),
-                                    f"leaderboard.state == {server.BoardStateEnum.COMPLETED}": "Did not finish",
+                                    f"state_map.state == {server.BoardStateEnum.COMPLETED}": "Did not finish",
                                     "": stop_team_form,
                                 },
                             ),
@@ -458,7 +458,7 @@ def generate_leaderboard_get() -> str:
 
     teams_table = htmlgen.jinja_table(
         "Current Teams",
-        header_iterate=f"(('Place', 'Team Name') if leaderboard.state == {server.BoardStateEnum.CREATED} else ('Place', 'Team Name', 'Time'))",
+        header_iterate=f"(('Place', 'Team Name') if state_map.state == {server.BoardStateEnum.CREATED} else ('Place', 'Team Name', 'Time'))",
         body=teams_table_body,
     )
 
@@ -480,7 +480,7 @@ def generate_leaderboard_get() -> str:
 
     teams_display = htmlgen.jinja_if_block(
         {
-            "leaderboard.teams|length != 0": teams_table,
+            "state_map.teams|length != 0": teams_table,
             "": no_teams,
         },
     )
@@ -504,14 +504,14 @@ def generate_leaderboard_get() -> str:
 
     create_team_section = htmlgen.jinja_if_block(
         {
-            f"leaderboard.state == {server.BoardStateEnum.CREATED}": htmlgen.contain_in_box(
+            f"state_map.state == {server.BoardStateEnum.CREATED}": htmlgen.contain_in_box(
                 create_team_form,
             ),
         },
     )
 
     start_timer_form_content = htmlgen.input_field(
-        "start_leaderboard_timer",
+        "start_state_map_timer",
         None,
         field_type="hidden",
         attrs={"value": "true"},
@@ -524,7 +524,7 @@ def generate_leaderboard_get() -> str:
     )
 
     stop_timer_form_content = htmlgen.input_field(
-        "stop_leaderboard_timer",
+        "stop_state_map_timer",
         None,
         field_type="hidden",
         attrs={"value": "true"},
@@ -538,8 +538,8 @@ def generate_leaderboard_get() -> str:
 
     timer_control_section = htmlgen.jinja_if_block(
         {
-            f"leaderboard.state == {server.BoardStateEnum.CREATED} and leaderboard.teams": start_timer_form,
-            f"leaderboard.state == {server.BoardStateEnum.RUNNING}": stop_timer_form,
+            f"state_map.state == {server.BoardStateEnum.CREATED} and state_map.teams": start_timer_form,
+            f"state_map.state == {server.BoardStateEnum.RUNNING}": stop_timer_form,
         },
     )
 
@@ -553,7 +553,7 @@ def generate_leaderboard_get() -> str:
                 "/",
                 htmlgen.wrap_tag(
                     "button",
-                    "View / Create Leaderboard",
+                    "View / Create state_map",
                     block=False,
                 ),
             ),

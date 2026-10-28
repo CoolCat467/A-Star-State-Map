@@ -4,5 +4,5 @@
 
 while true
 do
-    leaderboard_server
+    state_map_server
 done
