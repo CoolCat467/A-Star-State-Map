@@ -1,5 +1,5 @@
-# Leaderboard-Server
-Simple leaderboard webserver.
+# A Star State Map Server
+Simple A* state map pathfinding webserver.
 
 [![Tests](https://github.com/CoolCat467/A-Star-State-Map/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/CoolCat467/A-Star-State-Map/actions/workflows/ci.yml)
 <!-- BADGIE TIME -->
@@ -8,11 +8,7 @@ Simple leaderboard webserver.
 
 <!-- END BADGIE TIME -->
 
-This is basically a website to run a simple leaderboard where you can
-create a new leaderboard, view a exiting leaderboard, create a new team
-in a leaderboard, start the timer for the leaderboard, mark a selected
-team as completed, and end the timer to mark all remaining teams as did
-not finish.
+<!-- description text -->
 
 On default, the web server is hosted on port `3004`.
 This can be changed in the configuration file (more info below)
