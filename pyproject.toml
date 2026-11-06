@@ -41,6 +41,7 @@ dependencies = [
     'exceptiongroup >= 1.2.0; python_version < "3.11"',
     'tomli >= 2.0.1; python_version < "3.11"',
     "platformdirs>=4.12.4",
+    "pyroutelib3>=2.0.0",
 ]
 
 [tool.setuptools.dynamic]
