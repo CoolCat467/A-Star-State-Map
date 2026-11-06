@@ -163,7 +163,7 @@ async def root_post() -> (
 
     # create state_map
     uuid = uuid4()
-    APP_DATA["state_maps"][uuid] = state_map(title)
+    APP_DATA["state_maps"][uuid] = StateMap(title)
 
     return app.redirect(f"/state_map/{uuid}")
 
